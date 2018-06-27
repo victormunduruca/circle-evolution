@@ -1,5 +1,14 @@
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+
 
 import model.Circle;
 import model.Individual;
@@ -11,16 +20,16 @@ public class Main {
 	static int imgWidth = 0;
 	static int imgHeight = 0;
 	public static void main(String[] args) throws IOException {
-		/*
-		BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
-		BufferedImage image2 = ImageIO.read(new File("dog.jpg"));
+
+		/*BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
+		//BufferedImage image2 = ImageIO.read(new File("dog.jpg"));
 		
 		Graphics2D g = image.createGraphics();
-		g.setColor(Color.WHITE);
+		g.setColor(new Color(255, 255, 255));
 		g.fillOval(8, 8, 40, 40);
-		
-		byte[] pixels = ((DataBufferByte) image2.getRaster().getDataBuffer()).getData();
-		System.out.println(pixels[0]);
+	
+		//byte[] pixels = ((DataBufferByte) image2.getRaster().getDataBuffer()).getData();
+		//System.out.println(pixels[0]);
 		
 		
 		File outputfile = new File("saved.png");
@@ -35,15 +44,17 @@ public class Main {
 		//survivor selecton
 		//endloop
 		//terminate and return best
-		imgWidth =  100;
-		imgHeight = 100;
+		imgWidth =  400;
+		imgHeight = 400;
 		initializePopulation();
-		
 		for (Individual i: population) {
 			for(Circle c: i.getChromossome()) {
 				System.out.println(c.getGrayScale() + "-" +c.getX() + "-" + c.getY() + "\n");
 			}
 		}
+		BufferedImage img = paintIndividual(population.get(2));
+		File outputfile = new File("saved.png");
+		ImageIO.write(img, "png", outputfile);
 		
 	}
 	public static void initializePopulation() {
@@ -54,5 +65,13 @@ public class Main {
 			population.add(newIndividual); //add individual to population
 		}
 	}
-
+	public static BufferedImage paintIndividual(Individual i) {
+		BufferedImage image = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_BYTE_GRAY); //create blank image
+		Graphics2D g = image.createGraphics(); //create 2D java canvas
+		for(Circle c: i.getChromossome()) {
+			g.setColor(new Color(c.getGrayScale(), c.getGrayScale(), c.getGrayScale())); //set color and fill the canvas with a new circle
+			g.fillOval(c.getX(), c.getY(), c.getSize(), c.getSize());
+		}
+		return image; //returns the painted image
+	}
 }

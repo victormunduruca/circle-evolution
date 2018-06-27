@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Circle {
 	private int grayScale;
-	private double size;
+	private int size;
 	private int x;
 	
 	public int getGrayScale() {
@@ -15,11 +15,11 @@ public class Circle {
 		this.grayScale = grayScale;
 	}
 
-	public double getSize() {
+	public int getSize() {
 		return size;
 	}
 
-	public void setSize(double size) {
+	public void setSize(int size) {
 		this.size = size;
 	}
 
