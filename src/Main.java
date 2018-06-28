@@ -19,6 +19,7 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
+	static BufferedImage originalImg;
 	public static void main(String[] args) throws IOException {
 
 		/*BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
@@ -44,24 +45,27 @@ public class Main {
 		//survivor selecton
 		//endloop
 		//terminate and return best
-		imgWidth =  400;
-		imgHeight = 400;
-		initializePopulation();
-		for (Individual i: population) {
-			for(Circle c: i.getChromossome()) {
-				System.out.println(c.getGrayScale() + "-" +c.getX() + "-" + c.getY() + "\n");
-			}
-		}
-		BufferedImage img = paintIndividual(population.get(2));
-		File outputfile = new File("saved.png");
-		ImageIO.write(img, "png", outputfile);
+		
+//		imgWidth =  300;
+//		imgHeight = 300;
+//		initializePopulation();
+//		int o = 0;
+//		for (Individual i: population) {
+//			o++;
+//			BufferedImage img = paintIndividual(i);
+//			File outputfile = new File("saved"+ o+ ".png");
+//			ImageIO.write(img, "png", outputfile);
+//		}
+		originalImg = ImageIO.read(new File("dog.jpg"));
+		BufferedImage img = ImageIO.read(new File("dog copy.jpg"));
+		System.out.println(fitness(img));
 		
 	}
 	public static void initializePopulation() {
 		population = new ArrayList<Individual>();
 		for (int i = 0; i < 50; i++) { 
 			Individual newIndividual = new Individual(); //create new indvidual
-			newIndividual.addRandomly(5, imgWidth, imgHeight); //add random circles to the individual
+			newIndividual.addRandomly(15, imgWidth, imgHeight); //add random circles to the individual
 			population.add(newIndividual); //add individual to population
 		}
 	}
@@ -73,5 +77,15 @@ public class Main {
 			g.fillOval(c.getX(), c.getY(), c.getSize(), c.getSize());
 		}
 		return image; //returns the painted image
+	}
+	public static int fitness(BufferedImage img) {
+		int fitness = 0, subtraction;
+		byte[] imgPixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData(); //get pixel arrays
+		byte[] originalPixels = ((DataBufferByte) originalImg.getRaster().getDataBuffer()).getData();
+		for(int i = 0; i < imgPixels.length; i++) { //iterate over arrays and subtract equivalent pixels and sum the 
+			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
+			fitness += subtraction;//keep the result into a variable 
+		}
+		return fitness;
 	}
 }

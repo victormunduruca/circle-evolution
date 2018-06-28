@@ -43,7 +43,7 @@ public class Circle {
 	
 	public Circle(int imgWidth, int imgHeight) {
 		grayScale = ThreadLocalRandom.current().nextInt(0, 256);
-		size = ThreadLocalRandom.current().nextInt(0, 40);
+		size = ThreadLocalRandom.current().nextInt(0, 100);
 		x = ThreadLocalRandom.current().nextInt(0, imgWidth);
 		y = ThreadLocalRandom.current().nextInt(0, imgHeight);
 	}
