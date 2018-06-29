@@ -24,21 +24,21 @@ public class Main {
 	static int chromossomeSize = 4;
 	static BufferedImage originalImg;
 	public static void main(String[] args) throws IOException {
-
-		/*BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
-		//BufferedImage image2 = ImageIO.read(new File("dog.jpg"));
-		
-		Graphics2D g = image.createGraphics();
-		g.setColor(new Color(255, 255, 255));
-		g.fillOval(8, 8, 40, 40);
-	
-		//byte[] pixels = ((DataBufferByte) image2.getRaster().getDataBuffer()).getData();
-		//System.out.println(pixels[0]);
-		
-		
-		File outputfile = new File("saved.png");
-		ImageIO.write(image, "png", outputfile);
-		*/
+		originalImg = ImageIO.read(new File("dog.jpg"));
+		imgWidth =  300;
+		imgHeight = 300;
+		initializePopulation();
+		int i = 0;
+		while(i < 2) {
+			calculatePopulationFitness();
+			ArrayList<Individual> parents =  parentSelection();
+			ArrayList<Individual> offspring = crossover(parents.get(0), parents.get(1));
+			mutation(offspring.get(0));
+			mutation(offspring.get(1));
+			population.set(population.size() - 1, offspring.get(0));
+			population.set(population.size() - 2, offspring.get(1));
+			i++;
+		}
 		//Population initiaization
 		//loop
 		//fitness function calculation
@@ -49,8 +49,7 @@ public class Main {
 		//endloop
 		//terminate and return best
 		
-		imgWidth =  300;
-		imgHeight = 300;
+		
 //		initializePopulation();
 //		int o = 0;
 //		for (Individual i: population) {
@@ -59,33 +58,8 @@ public class Main {
 //			File outputfile = new File("saved"+ o+ ".png");
 //			ImageIO.write(img, "png", outputfile);
 //		}
-		originalImg = ImageIO.read(new File("dog.jpg"));
-//		BufferedImage img = ImageIO.read(new File("dog copy.jpg"));
-//		System.out.println(fitness(img));
 		
-		//Mutation test
-//		initializePopulation();
-//		printIndividual(population.get(0));
-//		printIndividual(population.get(1));
-//		mutation(0);
-//		mutation(1);
-//		System.out.println("Crossover");
-//		printIndividual(population.get(0));
-//		printIndividual(population.get(1));
-		
-		//Parent Selection Test
-		initializePopulation();
-		
-		for(Individual i: population) {
-			System.out.println("Fitness: " +i.getFitness() + "");
-		}
-		ArrayList<Individual> best= parentSelection();
-		System.out.println();
-		for(Individual i: population) {
-			System.out.println("Fitness: " +i.getFitness() + "");
-		}
-		System.out.println("Best1: " +best.get(0).getFitness());
-		System.out.println("Best2: " +best.get(1).getFitness());
+
 		
 	}
 	public static void initializePopulation() {
@@ -95,7 +69,6 @@ public class Main {
 			newIndividual.addRandomly(chromossomeSize, imgWidth, imgHeight); //add random circles to the individual
 			population.add(newIndividual); //add individual to population
 		}
-		calculatePopulationFitness();
 	}
 	public static BufferedImage paintIndividual(Individual i) {
 		BufferedImage image = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_BYTE_GRAY); //create blank image
@@ -107,9 +80,9 @@ public class Main {
 		return image; //returns the painted image
 	}
 	
-	public static void crossover(int firstIndex, int secondIndex) {
-		ArrayList<Circle> firstChromossome = population.get(firstIndex).getChromossome(); //retrieve first and second chromossomes
-		ArrayList<Circle> secondChromossome = population.get(secondIndex).getChromossome();
+	public static  ArrayList<Individual> crossover(Individual first, Individual second) {
+		ArrayList<Circle> firstChromossome = first.getChromossome(); //retrieve first and second chromossomes
+		ArrayList<Circle> secondChromossome = second.getChromossome();
 		Circle auxCircle; //auxiliary circle for swap
 		
 		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize); //breaking adress is randomly selected
@@ -119,9 +92,13 @@ public class Main {
 			firstChromossome.set(i, secondChromossome.get(i));//swap first and second chromossomes
 			secondChromossome.set(i, auxCircle);
 		}
+		ArrayList<Individual> offspring = new ArrayList<>();
+		offspring.add(first);
+		offspring.add(second);
+		return offspring;
 	}
-	public static void mutation(int index) {
-		ArrayList<Circle> chromossome = population.get(index).getChromossome();  //get chromossome
+	public static void mutation(Individual i) {
+		ArrayList<Circle> chromossome = i.getChromossome();  //get chromossome
 		int randomIndex = ThreadLocalRandom.current().nextInt(0, chromossomeSize);//select a random gene
 		int randomFeature = ThreadLocalRandom.current().nextInt(0, 3);//select a random characteristic
 		//randomly reset the choosen characteristic's value
@@ -173,3 +150,17 @@ public class Main {
 		System.out.println("\n");
 	}
 }
+/*BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
+//BufferedImage image2 = ImageIO.read(new File("dog.jpg"));
+
+Graphics2D g = image.createGraphics();
+g.setColor(new Color(255, 255, 255));
+g.fillOval(8, 8, 40, 40);
+
+//byte[] pixels = ((DataBufferByte) image2.getRaster().getDataBuffer()).getData();
+//System.out.println(pixels[0]);
+
+
+File outputfile = new File("saved.png");
+ImageIO.write(image, "png", outputfile);
+*/
