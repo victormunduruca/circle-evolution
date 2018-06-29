@@ -61,7 +61,8 @@ public class Main {
 		initializePopulation();
 		printIndividual(population.get(0));
 		printIndividual(population.get(1));
-		crossover(0, 1);
+		mutation(0);
+		mutation(1);
 		System.out.println("Crossover");
 		printIndividual(population.get(0));
 		printIndividual(population.get(1));
@@ -98,7 +99,7 @@ public class Main {
 		ArrayList<Circle> secondChromossome = population.get(secondIndex).getChromossome();
 		Circle auxCircle; //auxiliary circle for swap
 		
-		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize+1); //breaking adress is randomly selected
+		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize); //breaking adress is randomly selected
 		System.out.println("BreakingIndex: " +breakingIndex);
 		for(int i = 0; i < breakingIndex; i++) { //iterate until breaking index
 			auxCircle = firstChromossome.get(i); // value of first circle is saved
@@ -106,10 +107,25 @@ public class Main {
 			secondChromossome.set(i, auxCircle);
 		}
 	}
+	public static void mutation(int index) {
+		ArrayList<Circle> chromossome = population.get(index).getChromossome();  //get chromossome
+		int randomIndex = ThreadLocalRandom.current().nextInt(0, chromossomeSize);//select a random gene
+		int randomFeature = ThreadLocalRandom.current().nextInt(0, 3);//select a random characteristic
+		//randomly reset its value
+		if(randomFeature == 0) {
+			chromossome.get(randomIndex).setGrayScale(ThreadLocalRandom.current().nextInt(0, 256)); 
+		} else if (randomFeature == 1){
+			chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 40));
+		} else if(randomFeature == 2){ 
+			chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
+			chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
+		}
+		
+	}
 	public static void printIndividual(Individual i) {
 		//TODO remover
 		for (Circle c : i.getChromossome()) {
-			System.out.print(c.getGrayScale() + " ");
+			System.out.print(c.toString());
 		}
 		System.out.println("\n");
 	}

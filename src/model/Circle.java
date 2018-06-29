@@ -51,4 +51,10 @@ public class Circle {
 	public void setRandomCoordinates(int width, int height) {
 		
 	}
+	
+	@Override
+	public String toString() {
+		return "Gray: " + grayScale + ", size: " + size + ", x: " + x + ", y: " + y + "     ";
+		
+	}
 }
