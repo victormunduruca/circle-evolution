@@ -3,12 +3,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
+import java.util.concurrent.ThreadLocalRandom;
 
 import model.Circle;
 import model.Individual;
@@ -19,6 +16,7 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
+	static int chromossomeSize = 4;
 	static BufferedImage originalImg;
 	public static void main(String[] args) throws IOException {
 
@@ -46,8 +44,8 @@ public class Main {
 		//endloop
 		//terminate and return best
 		
-//		imgWidth =  300;
-//		imgHeight = 300;
+		imgWidth =  300;
+		imgHeight = 300;
 //		initializePopulation();
 //		int o = 0;
 //		for (Individual i: population) {
@@ -56,16 +54,23 @@ public class Main {
 //			File outputfile = new File("saved"+ o+ ".png");
 //			ImageIO.write(img, "png", outputfile);
 //		}
-		originalImg = ImageIO.read(new File("dog.jpg"));
-		BufferedImage img = ImageIO.read(new File("dog copy.jpg"));
-		System.out.println(fitness(img));
+//		originalImg = ImageIO.read(new File("dog.jpg"));
+//		BufferedImage img = ImageIO.read(new File("dog copy.jpg"));
+//		System.out.println(fitness(img));
 		
+		initializePopulation();
+		printIndividual(population.get(0));
+		printIndividual(population.get(1));
+		crossover(0, 1);
+		System.out.println("Crossover");
+		printIndividual(population.get(0));
+		printIndividual(population.get(1));
 	}
 	public static void initializePopulation() {
 		population = new ArrayList<Individual>();
-		for (int i = 0; i < 50; i++) { 
+		for (int i = 0; i < 2; i++) { 
 			Individual newIndividual = new Individual(); //create new indvidual
-			newIndividual.addRandomly(15, imgWidth, imgHeight); //add random circles to the individual
+			newIndividual.addRandomly(chromossomeSize, imgWidth, imgHeight); //add random circles to the individual
 			population.add(newIndividual); //add individual to population
 		}
 	}
@@ -86,6 +91,26 @@ public class Main {
 			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
 			fitness += subtraction;//keep the result into a variable 
 		}
-		return fitness;
+		return fitness/imgPixels.length;
+	}
+	public static void crossover(int firstIndex, int secondIndex) {
+		ArrayList<Circle> firstChromossome = population.get(firstIndex).getChromossome(); //retrieve first and second chromossomes
+		ArrayList<Circle> secondChromossome = population.get(secondIndex).getChromossome();
+		Circle auxCircle; //auxiliary circle for swap
+		
+		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize+1); //breaking adress is randomly selected
+		System.out.println("BreakingIndex: " +breakingIndex);
+		for(int i = 0; i < breakingIndex; i++) { //iterate until breaking index
+			auxCircle = firstChromossome.get(i); // value of first circle is saved
+			firstChromossome.set(i, secondChromossome.get(i));//swap first and second chromossomes
+			secondChromossome.set(i, auxCircle);
+		}
+	}
+	public static void printIndividual(Individual i) {
+		//TODO remover
+		for (Circle c : i.getChromossome()) {
+			System.out.print(c.getGrayScale() + " ");
+		}
+		System.out.println("\n");
 	}
 }
