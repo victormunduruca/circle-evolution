@@ -21,90 +21,44 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
-	static int chromossomeSize = 3;
+	static int chromossomeSize = 300;
+	static int populationSize = 100;
 	static BufferedImage originalImg;
 	public static void main(String[] args) throws IOException, CloneNotSupportedException {
-		originalImg = ImageIO.read(new File("dog.jpg"));
+		originalImg = ImageIO.read(new File("man.jpg"));
 		imgWidth =  300;
 		imgHeight = 300;
 		initializePopulation();
 		calculatePopulationFitness(); //calculate population fitness
 		
-		int i = 0;
-		
-			for(Individual r : population) {
-				printIndividual(r);
-			}
-			ArrayList<Individual> parents =  parentSelection(); //select parents
-			
-			ArrayList<Individual> offspring = crossover(parents.get(0), parents.get(1)); //generate parent's offspring
-			System.out.println("Offspring");
-			for(Individual r : offspring) {
-				printIndividual(r);
-			}
-			System.out.println("Mutation");
-			mutation(offspring.get(0));
-			mutation(offspring.get(1));
-			for(Individual r : offspring) {
-				printIndividual(r);
-			}
-
-		
-			
-			population.set(population.size() - 1, offspring.get(0));
-			population.set(population.size() - 2, offspring.get(1));
-			calculatePopulationFitness();
-			System.out.println("Populacao depois");
-			for(Individual r : population) {
-				printIndividual(r);
-			}
-			//population.set(population.size() - 1, mutation(offspring.get(0))); 
-			//population.set(population.size() - 2, mutation(offspring.get(1)));
-			
-			
-			//calculatePopulationFitness(); //calculate population fitness
-			i++;
-		
-	
-		int o = 0;
-		
-		for (Individual p: population) {
-			o++;
-			BufferedImage img = paintIndividual(p);
-			File outputfile = new File("saved"+ o+ ".png");
-			ImageIO.write(img, "png", outputfile);
-		
-		}
-	
-	//	System.out.println(population.get(population.size() - 1).getFitness());
-	//	System.out.println(population.get(population.size() - 2).getFitness());
-		
-		//Population initiaization
-		//loop
-		//fitness function calculation
-			//paint circles 
-		//crossover
-		//mutation
-		//survivor selecton
-		//endloop
-		//terminate and return best
-		
-		
-//		initializePopulation();
-//		int o = 0;
-//		for (Individual i: population) {
-//			o++;
-//			BufferedImage img = paintIndividual(i);
-//			File outputfile = new File("saved"+ o+ ".png");
-//			ImageIO.write(img, "png", outputfile);
+//		
+//		int i = 0;
+//		while(i < 200) {
+//			System.out.println(i);
+//			ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
+//			ArrayList<Individual> offspring = new ArrayList<Individual>(crossover(parents.get(0), parents.get(1))); //generate parent's offspring
+//			mutation(offspring.get(0));
+//			mutation(offspring.get(1));
+//			population.set(population.size() - 1, offspring.get(0));
+//			population.set(population.size() - 2, offspring.get(1));
+//			calculatePopulationFitness();
+//			i++;
 //		}
-		
-
+//		int o = 0;
+//		for (Individual p: population) {
+//			System.out.println(o);
+//			o++;
+//			BufferedImage img = paintIndividual(p);
+//			File outputfile = new File(i+ "   saved"+ o+ ".png");
+//			ImageIO.write(img, "png", outputfile);
+//			printIndividual(p);
+//		
+//		}
 		
 	}
 	public static void initializePopulation() {
 		population = new ArrayList<Individual>();
-		for (int i = 0; i < 5; i++) { 
+		for (int i = 0; i < populationSize; i++) { 
 			Individual newIndividual = new Individual(); //create new individual
 			newIndividual.addRandomly(chromossomeSize, imgWidth, imgHeight); //add random circles to the individual
 			population.add(newIndividual); //add individual to population
@@ -149,18 +103,27 @@ public class Main {
 			chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
 			chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
 		}
+
 		i.setChromossome(chromossome);
 	}
 	public static ArrayList<Individual> parentSelection() {
-		//TODo
-		sortPopulation();
-		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();
-		bestIndividuals.add(population.get(0));
-		bestIndividuals.add(population.get(1));
-		return bestIndividuals;
+		//TODO 
+//		sortPopulation();
+		ArrayList<Individual> kIndividuals = new ArrayList<Individual>();
+		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();	
+		for(int i = 0; i < 10; i++) {//select random k individuals
+			Individual newIndividual = population.get(ThreadLocalRandom.current().nextInt(0, populationSize));
+			if(!kIndividuals.contains(newIndividual)) {
+				kIndividuals.add(newIndividual);
+			}
+		}
+		sortIndividuals(kIndividuals);//order them
+		bestIndividuals.add(kIndividuals.get(0));//return two best fitness
+		bestIndividuals.add(kIndividuals.get(1));
+		return null;
 	}
-	public static void sortPopulation() {
-		Collections.sort(population, new Comparator<Individual>() {
+	public static void sortIndividuals(ArrayList<Individual> list) {
+		Collections.sort(list, new Comparator<Individual>() {
 			@Override
 			public int compare(Individual o1, Individual o2) {
 				Individual ind1 = (Individual) o1;
@@ -191,17 +154,4 @@ public class Main {
 		System.out.println("\n");
 	}
 }
-/*BufferedImage image = new BufferedImage(600, 400, BufferedImage.TYPE_BYTE_GRAY);
-//BufferedImage image2 = ImageIO.read(new File("dog.jpg"));
 
-Graphics2D g = image.createGraphics();
-g.setColor(new Color(255, 255, 255));
-g.fillOval(8, 8, 40, 40);
-
-//byte[] pixels = ((DataBufferByte) image2.getRaster().getDataBuffer()).getData();
-//System.out.println(pixels[0]);
-
-
-File outputfile = new File("saved.png");
-ImageIO.write(image, "png", outputfile);
-*/

@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 
-public class Individual implements Cloneable{
-	
+public class Individual implements Comparable<Individual>{
+	static int id = 0;
 	private ArrayList<Circle> chromossome;
 	private double fitness;
 	
@@ -31,7 +31,7 @@ public class Individual implements Cloneable{
 			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
 			fitness += subtraction;//keep the result into a variable 
 		}
-		this.fitness = fitness/imgPixels.length;
+		this.fitness = fitness;
 	}
 	
 	public ArrayList<Circle> getChromossome() {
@@ -44,10 +44,16 @@ public class Individual implements Cloneable{
 		return this.fitness;
 	}
 	
+
 	@Override
-	public Individual clone() throws CloneNotSupportedException {
-		return (Individual) super.clone();
-		
+	public int compareTo(Individual o) {
+		Individual ind2 = (Individual) o;
+		if(fitness < ind2.getFitness()) 
+			return -1;
+		else if(fitness == ind2.getFitness()) 
+			return 0;
+		else 
+			return 1;
 	}
 	
 	
