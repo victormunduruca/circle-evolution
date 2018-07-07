@@ -37,7 +37,7 @@ public class Main {
 			}
 			ArrayList<Individual> parents =  parentSelection(); //select parents
 			
-			ArrayList<Individual> offspring = crossover(parents.get(0).clone(), parents.get(1).clone()); //generate parent's offspring
+			ArrayList<Individual> offspring = crossover(parents.get(0), parents.get(1)); //generate parent's offspring
 			System.out.println("Offspring");
 			for(Individual r : offspring) {
 				printIndividual(r);
@@ -45,11 +45,15 @@ public class Main {
 			System.out.println("Mutation");
 			mutation(offspring.get(0));
 			mutation(offspring.get(1));
+			for(Individual r : offspring) {
+				printIndividual(r);
+			}
 
 		
 			
 			population.set(population.size() - 1, offspring.get(0));
 			population.set(population.size() - 2, offspring.get(1));
+			calculatePopulationFitness();
 			System.out.println("Populacao depois");
 			for(Individual r : population) {
 				printIndividual(r);
@@ -117,8 +121,8 @@ public class Main {
 	}
 	
 	public static  ArrayList<Individual> crossover(Individual first, Individual second) {
-		ArrayList<Circle> firstChromossome = first.getChromossome(); //retrieve first and second chromossomes
-		ArrayList<Circle> secondChromossome = first.getChromossome();
+		ArrayList<Circle> firstChromossome = new ArrayList<Circle>(first.getChromossome()); //retrieve first and second chromossomes
+		ArrayList<Circle> secondChromossome = new ArrayList<Circle>(second.getChromossome()); 
 		Circle auxCircle; //auxiliary circle for swap
 		
 		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize); //breaking adress is randomly selected
@@ -128,8 +132,8 @@ public class Main {
 			secondChromossome.set(i, auxCircle);
 		}
 		ArrayList<Individual> offspring = new ArrayList<>();
-		offspring.add(first);
-		offspring.add(second);
+		offspring.add(new Individual(firstChromossome));
+		offspring.add(new Individual(secondChromossome));
 		return offspring;
 	}
 	public static void mutation(Individual i) {

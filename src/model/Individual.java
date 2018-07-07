@@ -12,6 +12,10 @@ public class Individual implements Cloneable{
 	public Individual(){
 		chromossome = new ArrayList<Circle>();
 	}
+	public Individual(ArrayList<Circle> chromossome) {
+		this.chromossome = chromossome;
+	}
+	
 	public void addRandomly(int numberOfCircles, int imgWidth, int imgHeight) {
 		for(int i = 0; i < numberOfCircles; i++) {
 			chromossome.add(new Circle(imgWidth, imgHeight));
