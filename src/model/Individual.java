@@ -3,13 +3,13 @@ package model;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
-import java.util.Comparator;
 
-public class Individual{
+public class Individual implements Cloneable{
+	
 	private ArrayList<Circle> chromossome;
 	private double fitness;
 	
-	public Individual() {
+	public Individual(){
 		chromossome = new ArrayList<Circle>();
 	}
 	public void addRandomly(int numberOfCircles, int imgWidth, int imgHeight) {
@@ -19,7 +19,8 @@ public class Individual{
 	}
 	
 	public void setFitness(BufferedImage img, BufferedImage originalImg) {
-		int fitness = 0, subtraction;
+		double fitness = 0;
+		int subtraction;
 		byte[] imgPixels = ((DataBufferByte) img.getRaster().getDataBuffer()).getData(); //get pixel arrays
 		byte[] originalPixels = ((DataBufferByte) originalImg.getRaster().getDataBuffer()).getData();
 		for(int i = 0; i < imgPixels.length; i++) { //iterate over arrays and subtract equivalent pixels and sum the 
@@ -37,6 +38,12 @@ public class Individual{
 	}
 	public double getFitness() {
 		return this.fitness;
+	}
+	
+	@Override
+	public Individual clone() throws CloneNotSupportedException {
+		return (Individual) super.clone();
+		
 	}
 	
 	

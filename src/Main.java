@@ -21,24 +21,60 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
-	static int chromossomeSize = 4;
+	static int chromossomeSize = 3;
 	static BufferedImage originalImg;
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, CloneNotSupportedException {
 		originalImg = ImageIO.read(new File("dog.jpg"));
 		imgWidth =  300;
 		imgHeight = 300;
 		initializePopulation();
+		calculatePopulationFitness(); //calculate population fitness
+		
 		int i = 0;
-		while(i < 2) {
-			calculatePopulationFitness();
-			ArrayList<Individual> parents =  parentSelection();
-			ArrayList<Individual> offspring = crossover(parents.get(0), parents.get(1));
+		
+			for(Individual r : population) {
+				printIndividual(r);
+			}
+			ArrayList<Individual> parents =  parentSelection(); //select parents
+			
+			ArrayList<Individual> offspring = crossover(parents.get(0).clone(), parents.get(1).clone()); //generate parent's offspring
+			System.out.println("Offspring");
+			for(Individual r : offspring) {
+				printIndividual(r);
+			}
+			System.out.println("Mutation");
 			mutation(offspring.get(0));
 			mutation(offspring.get(1));
+
+		
+			
 			population.set(population.size() - 1, offspring.get(0));
 			population.set(population.size() - 2, offspring.get(1));
+			System.out.println("Populacao depois");
+			for(Individual r : population) {
+				printIndividual(r);
+			}
+			//population.set(population.size() - 1, mutation(offspring.get(0))); 
+			//population.set(population.size() - 2, mutation(offspring.get(1)));
+			
+			
+			//calculatePopulationFitness(); //calculate population fitness
 			i++;
+		
+	
+		int o = 0;
+		
+		for (Individual p: population) {
+			o++;
+			BufferedImage img = paintIndividual(p);
+			File outputfile = new File("saved"+ o+ ".png");
+			ImageIO.write(img, "png", outputfile);
+		
 		}
+	
+	//	System.out.println(population.get(population.size() - 1).getFitness());
+	//	System.out.println(population.get(population.size() - 2).getFitness());
+		
 		//Population initiaization
 		//loop
 		//fitness function calculation
@@ -64,7 +100,7 @@ public class Main {
 	}
 	public static void initializePopulation() {
 		population = new ArrayList<Individual>();
-		for (int i = 0; i < 10; i++) { 
+		for (int i = 0; i < 5; i++) { 
 			Individual newIndividual = new Individual(); //create new individual
 			newIndividual.addRandomly(chromossomeSize, imgWidth, imgHeight); //add random circles to the individual
 			population.add(newIndividual); //add individual to population
@@ -82,11 +118,10 @@ public class Main {
 	
 	public static  ArrayList<Individual> crossover(Individual first, Individual second) {
 		ArrayList<Circle> firstChromossome = first.getChromossome(); //retrieve first and second chromossomes
-		ArrayList<Circle> secondChromossome = second.getChromossome();
+		ArrayList<Circle> secondChromossome = first.getChromossome();
 		Circle auxCircle; //auxiliary circle for swap
 		
 		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize); //breaking adress is randomly selected
-		System.out.println("BreakingIndex: " +breakingIndex);
 		for(int i = 0; i < breakingIndex; i++) { //iterate until breaking index
 			auxCircle = firstChromossome.get(i); // value of first circle is saved
 			firstChromossome.set(i, secondChromossome.get(i));//swap first and second chromossomes
@@ -110,6 +145,7 @@ public class Main {
 			chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
 			chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
 		}
+		i.setChromossome(chromossome);
 	}
 	public static ArrayList<Individual> parentSelection() {
 		//TODo
@@ -147,6 +183,7 @@ public class Main {
 		for (Circle c : i.getChromossome()) {
 			System.out.print(c.toString());
 		}
+		System.out.println(i.getFitness());
 		System.out.println("\n");
 	}
 }

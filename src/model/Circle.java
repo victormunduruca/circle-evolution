@@ -43,7 +43,7 @@ public class Circle {
 	
 	public Circle(int imgWidth, int imgHeight) {
 		grayScale = ThreadLocalRandom.current().nextInt(0, 256);
-		size = ThreadLocalRandom.current().nextInt(0, 100);
+		size = ThreadLocalRandom.current().nextInt(0, 200);
 		x = ThreadLocalRandom.current().nextInt(0, imgWidth);
 		y = ThreadLocalRandom.current().nextInt(0, imgHeight);
 	}
@@ -54,7 +54,7 @@ public class Circle {
 	
 	@Override
 	public String toString() {
-		return "Gray: " + grayScale + ", size: " + size + ", x: " + x + ", y: " + y + "     ";
+		return "Gray: " + grayScale + ", size: " + size + ", x: " + x + ", y: " + y + " | ";
 		
 	}
 }
