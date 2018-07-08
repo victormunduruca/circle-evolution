@@ -27,7 +27,7 @@ public class Main {
 	static BufferedImage originalImg;
 	
 	public static void main(String[] args) throws IOException {
-		originalImg = ImageIO.read(new File("man.jpg"));
+		originalImg = ImageIO.read(new File("fit2.png"));
 		imgWidth =  300;
 		imgHeight = 300;
 		initializePopulation();
@@ -37,16 +37,27 @@ public class Main {
 		int i = 0;
 		while(i < 500) {
 			System.out.println(i);
+			ArrayList<Individual> offspring = new ArrayList<Individual>(); //generate parent's offspring
 			
+			for(int k = 0; k < 37; k++) {
+				ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
+				offspring.addAll(crossover(parents.get(0), parents.get(1)));
+			}
 			
+			for(Individual j: offspring) {
+				mutation(j);
+			}
 			
-			ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
-			ArrayList<Individual> offspring = new ArrayList<Individual>(crossover(parents.get(0), parents.get(1))); //generate parent's offspring
-			mutation(offspring.get(0)); //mutate offspring
-			mutation(offspring.get(1));
+//			mutation(offspring.get(0)); //mutate offspring
+//			mutation(offspring.get(1));
 			sortIndividuals(population);
-			population.set(population.size() - 1, offspring.get(0)); //replace old individuals with offspring
-			population.set(population.size() - 2, offspring.get(1));
+			int offCount = 0;
+			for(int k = populationSize -1; k > 62; k--) {
+				population.set(k, offspring.get(offCount));
+				offCount++;
+			}
+//			population.set(population.size() - 1, offspring.get(0)); //replace old individuals with offspring
+//			population.set(population.size() - 2, offspring.get(1));
 			calculatePopulationFitness(); //calculate the population fitness
 			
 			BufferedImage img = paintIndividual(population.get(0));
