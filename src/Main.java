@@ -21,22 +21,23 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
-	static int chromossomeSize = 200;
+	static int chromossomeSize = 50;
 	static int populationSize = 100;
-	static int tournamentSize = 5;
+	static int tournamentSize = 6;
 	static BufferedImage originalImg;
 	
 	public static void main(String[] args) throws IOException {
-		originalImg = ImageIO.read(new File("fit2.png"));
-		imgWidth =  300;
-		imgHeight = 300;
+		originalImg = ImageIO.read(new File("darwin.jpg"));
+		imgWidth =  originalImg.getWidth();
+		imgHeight = originalImg.getHeight();
 		initializePopulation();
 		calculatePopulationFitness(); //calculate population fitness
 		
 		
 		int i = 0;
-		while(i < 500) {
-			System.out.println(i);
+		while(i < 100) {
+			sortIndividuals(population);
+			System.out.println(i + " | " + population.get(0).getFitness());
 			ArrayList<Individual> offspring = new ArrayList<Individual>(); //generate parent's offspring
 			
 			for(int k = 0; k < 37; k++) {
@@ -59,13 +60,18 @@ public class Main {
 //			population.set(population.size() - 1, offspring.get(0)); //replace old individuals with offspring
 //			population.set(population.size() - 2, offspring.get(1));
 			calculatePopulationFitness(); //calculate the population fitness
-			
+			sortIndividuals(population);
 			BufferedImage img = paintIndividual(population.get(0));
 			File outputfile = new File(i+ "   saved"+ i+ ".png");
 			ImageIO.write(img, "png", outputfile);
 			
 			i++;
 		}
+		
+		/*BufferedImage img = paintIndividual(population.get(0));
+		File outputfile = new File(i+ "   saved"+ i+ ".png");
+		ImageIO.write(img, "png", outputfile);*/
+		
 //		BufferedImage img1 = ImageIO.read(new File("primeiro.png"));
 //		BufferedImage img2 = ImageIO.read(new File("segundo.png"));
 //		
@@ -124,7 +130,7 @@ public class Main {
 			if(randomFeature == 0) {
 				chromossome.get(randomIndex).setGrayScale(ThreadLocalRandom.current().nextInt(0, 256)); 
 			} else if (randomFeature == 1){
-				chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 40));
+				chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 200));
 			} else if(randomFeature == 2){ 
 				chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
 				chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
@@ -135,17 +141,17 @@ public class Main {
 	public static ArrayList<Individual> parentSelection() {
 		//TODO 
 		ArrayList<Individual> kIndividuals = new ArrayList<Individual>();
-		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();	
-		
-		for(int i = 0; i < tournamentSize; i++) {//select random k individuals
+		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();
+		/*for(int i = 0; i < tournamentSize; i++) {//select random k individuals
 			Individual newIndividual = population.get(ThreadLocalRandom.current().nextInt(0, populationSize));
 			if(!kIndividuals.contains(newIndividual)) {
 				kIndividuals.add(newIndividual);
 			}
-		}
-		sortIndividuals(kIndividuals); //order them
-		bestIndividuals.add(kIndividuals.get(0)); //return two best fitness
-		bestIndividuals.add(kIndividuals.get(1));
+		}*/
+		//sortIndividuals(kIndividuals); //order them
+		sortIndividuals(population);
+		bestIndividuals.add(population.get(0)); //return two best fitness
+		bestIndividuals.add(population.get(1));
 		return bestIndividuals;
 	}
 	public static void sortIndividuals(ArrayList<Individual> list) {
