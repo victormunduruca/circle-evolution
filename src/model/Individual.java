@@ -31,7 +31,7 @@ public class Individual implements Comparable<Individual>{
 			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
 			fitness += subtraction;//keep the result into a variable 
 		}
-		this.fitness = fitness;
+		this.fitness = fitness/(imgPixels.length*300);
 	}
 	
 	public ArrayList<Circle> getChromossome() {

@@ -21,40 +21,54 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
-	static int chromossomeSize = 300;
+	static int chromossomeSize = 200;
 	static int populationSize = 100;
+	static int tournamentSize = 5;
 	static BufferedImage originalImg;
-	public static void main(String[] args) throws IOException, CloneNotSupportedException {
+	
+	public static void main(String[] args) throws IOException {
 		originalImg = ImageIO.read(new File("man.jpg"));
 		imgWidth =  300;
 		imgHeight = 300;
 		initializePopulation();
 		calculatePopulationFitness(); //calculate population fitness
 		
-//		
-//		int i = 0;
-//		while(i < 200) {
-//			System.out.println(i);
-//			ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
-//			ArrayList<Individual> offspring = new ArrayList<Individual>(crossover(parents.get(0), parents.get(1))); //generate parent's offspring
-//			mutation(offspring.get(0));
-//			mutation(offspring.get(1));
-//			population.set(population.size() - 1, offspring.get(0));
-//			population.set(population.size() - 2, offspring.get(1));
-//			calculatePopulationFitness();
-//			i++;
-//		}
-//		int o = 0;
-//		for (Individual p: population) {
-//			System.out.println(o);
-//			o++;
-//			BufferedImage img = paintIndividual(p);
-//			File outputfile = new File(i+ "   saved"+ o+ ".png");
-//			ImageIO.write(img, "png", outputfile);
-//			printIndividual(p);
-//		
-//		}
 		
+		int i = 0;
+		while(i < 500) {
+			System.out.println(i);
+			
+			
+			
+			ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
+			ArrayList<Individual> offspring = new ArrayList<Individual>(crossover(parents.get(0), parents.get(1))); //generate parent's offspring
+			mutation(offspring.get(0)); //mutate offspring
+			mutation(offspring.get(1));
+			sortIndividuals(population);
+			population.set(population.size() - 1, offspring.get(0)); //replace old individuals with offspring
+			population.set(population.size() - 2, offspring.get(1));
+			calculatePopulationFitness(); //calculate the population fitness
+			
+			BufferedImage img = paintIndividual(population.get(0));
+			File outputfile = new File(i+ "   saved"+ i+ ".png");
+			ImageIO.write(img, "png", outputfile);
+			
+			i++;
+		}
+//		BufferedImage img1 = ImageIO.read(new File("primeiro.png"));
+//		BufferedImage img2 = ImageIO.read(new File("segundo.png"));
+//		
+//		double fitness = 0;
+//		int subtraction;
+//		byte[] imgPixels = ((DataBufferByte) img1.getRaster().getDataBuffer()).getData(); //get pixel arrays
+//		byte[] originalPixels = ((DataBufferByte) img2.getRaster().getDataBuffer()).getData();
+//		for(int i = 0; i < imgPixels.length; i++) { //iterate over arrays and subtract equivalent pixels and sum the 
+//			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
+//			fitness += subtraction;//keep the result into a variable 
+//			System.out.println(fitness);
+//		}
+//		System.out.println("Fitness: " +fitness);
+	
 	}
 	public static void initializePopulation() {
 		population = new ArrayList<Individual>();
@@ -92,35 +106,36 @@ public class Main {
 	}
 	public static void mutation(Individual i) {
 		ArrayList<Circle> chromossome = i.getChromossome();  //get chromossome
-		int randomIndex = ThreadLocalRandom.current().nextInt(0, chromossomeSize);//select a random gene
-		int randomFeature = ThreadLocalRandom.current().nextInt(0, 3);//select a random characteristic
-		//randomly reset the choosen characteristic's value
-		if(randomFeature == 0) {
-			chromossome.get(randomIndex).setGrayScale(ThreadLocalRandom.current().nextInt(0, 256)); 
-		} else if (randomFeature == 1){
-			chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 40));
-		} else if(randomFeature == 2){ 
-			chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
-			chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
+		for(int j = 0; j < 2; j++) {
+			int randomIndex = ThreadLocalRandom.current().nextInt(0, chromossomeSize);//select a random gene
+			int randomFeature = ThreadLocalRandom.current().nextInt(0, 3);//select a random characteristic
+			//randomly reset the choosen characteristic's value
+			if(randomFeature == 0) {
+				chromossome.get(randomIndex).setGrayScale(ThreadLocalRandom.current().nextInt(0, 256)); 
+			} else if (randomFeature == 1){
+				chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 40));
+			} else if(randomFeature == 2){ 
+				chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
+				chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
+			}
 		}
-
 		i.setChromossome(chromossome);
 	}
 	public static ArrayList<Individual> parentSelection() {
 		//TODO 
-//		sortPopulation();
 		ArrayList<Individual> kIndividuals = new ArrayList<Individual>();
 		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();	
-		for(int i = 0; i < 10; i++) {//select random k individuals
+		
+		for(int i = 0; i < tournamentSize; i++) {//select random k individuals
 			Individual newIndividual = population.get(ThreadLocalRandom.current().nextInt(0, populationSize));
 			if(!kIndividuals.contains(newIndividual)) {
 				kIndividuals.add(newIndividual);
 			}
 		}
-		sortIndividuals(kIndividuals);//order them
-		bestIndividuals.add(kIndividuals.get(0));//return two best fitness
+		sortIndividuals(kIndividuals); //order them
+		bestIndividuals.add(kIndividuals.get(0)); //return two best fitness
 		bestIndividuals.add(kIndividuals.get(1));
-		return null;
+		return bestIndividuals;
 	}
 	public static void sortIndividuals(ArrayList<Individual> list) {
 		Collections.sort(list, new Comparator<Individual>() {
