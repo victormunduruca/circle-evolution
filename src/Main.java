@@ -21,64 +21,56 @@ public class Main {
 	static ArrayList<Individual> population;
 	static int imgWidth = 0;
 	static int imgHeight = 0;
-	static int chromossomeSize = 200;
-	static int populationSize = 100;
+	static int chromossomeSize = 3;
+	static int populationSize = 10;
 	static int tournamentSize = 5;
 	static BufferedImage originalImg;
 	
 	public static void main(String[] args) throws IOException {
-		originalImg = ImageIO.read(new File("fit2.png"));
+		originalImg = ImageIO.read(new File("dog.jpg"));
 		imgWidth =  300;
 		imgHeight = 300;
 		initializePopulation();
-		calculatePopulationFitness(); //calculate population fitness
-		
+		//calculatePopulationFitness(); //calculate population fitness
 		
 		int i = 0;
-		while(i < 500) {
+		while(i < 10) {
 			System.out.println(i);
+			calculatePopulationFitness(); //calculate the population fitness
 			ArrayList<Individual> offspring = new ArrayList<Individual>(); //generate parent's offspring
 			
-			for(int k = 0; k < 37; k++) {
+			//for(int k = 0; k < 3; k++) {
 				ArrayList<Individual> parents =  new ArrayList<Individual>(parentSelection()); //select parents
 				offspring.addAll(crossover(parents.get(0), parents.get(1)));
-			}
+			//}
 			
+			
+			
+			//System.out.println("OFFSPRING");
 			for(Individual j: offspring) {
+			//	printIndividual(j);
 				mutation(j);
 			}
-			
-//			mutation(offspring.get(0)); //mutate offspring
-//			mutation(offspring.get(1));
+		
 			sortIndividuals(population);
 			int offCount = 0;
-			for(int k = populationSize -1; k > 62; k--) {
+			for(int k = populationSize -1; k > 7; k--) {
 				population.set(k, offspring.get(offCount));
 				offCount++;
 			}
-//			population.set(population.size() - 1, offspring.get(0)); //replace old individuals with offspring
-//			population.set(population.size() - 2, offspring.get(1));
-			calculatePopulationFitness(); //calculate the population fitness
+			System.out.println("PRINTANDO POPULACAO");
+			for(Individual opa: population)
+				printIndividual(opa);
 			
-			BufferedImage img = paintIndividual(population.get(0));
-			File outputfile = new File(i+ "   saved"+ i+ ".png");
-			ImageIO.write(img, "png", outputfile);
+			//System.out.println(population.get(0).getFitness());
+			
+			
+//			BufferedImage img = paintIndividual(population.get(0));
+//			File outputfile = new File(i+ "   saved"+ i+ ".png");
+//			ImageIO.write(img, "png", outputfile);
 			
 			i++;
 		}
-//		BufferedImage img1 = ImageIO.read(new File("primeiro.png"));
-//		BufferedImage img2 = ImageIO.read(new File("segundo.png"));
-//		
-//		double fitness = 0;
-//		int subtraction;
-//		byte[] imgPixels = ((DataBufferByte) img1.getRaster().getDataBuffer()).getData(); //get pixel arrays
-//		byte[] originalPixels = ((DataBufferByte) img2.getRaster().getDataBuffer()).getData();
-//		for(int i = 0; i < imgPixels.length; i++) { //iterate over arrays and subtract equivalent pixels and sum the 
-//			subtraction = Math.abs(imgPixels[i] - originalPixels[i]);//get the absolute value of the subtraction 
-//			fitness += subtraction;//keep the result into a variable 
-//			System.out.println(fitness);
-//		}
-//		System.out.println("Fitness: " +fitness);
 	
 	}
 	public static void initializePopulation() {
@@ -100,8 +92,19 @@ public class Main {
 	}
 	
 	public static  ArrayList<Individual> crossover(Individual first, Individual second) {
-		ArrayList<Circle> firstChromossome = new ArrayList<Circle>(first.getChromossome()); //retrieve first and second chromossomes
-		ArrayList<Circle> secondChromossome = new ArrayList<Circle>(second.getChromossome()); 
+		System.out.println("Primeiro pai");
+		System.out.println("id: " +first.getId());
+		//printIndividual(first);
+		System.out.println("Segundo pai");
+		System.out.println("id: " +second.getId());
+		//printIndividual(second);
+		
+		Individual firstCopy = new Individual(first);
+		System.out.println("id copia: " +firstCopy.getId());
+		Individual secondCopy = new Individual(second);
+		System.out.println("id copia: " +secondCopy.getId());
+		ArrayList<Circle> firstChromossome = firstCopy.getChromossome(); //retrieve first and second chromossomes
+		ArrayList<Circle> secondChromossome = secondCopy.getChromossome(); 
 		Circle auxCircle; //auxiliary circle for swap
 		
 		int breakingIndex = ThreadLocalRandom.current().nextInt(1, chromossomeSize); //breaking adress is randomly selected
@@ -111,6 +114,11 @@ public class Main {
 			secondChromossome.set(i, auxCircle);
 		}
 		ArrayList<Individual> offspring = new ArrayList<>();
+//		System.out.println("Filho 1");
+//		printIndividual(new Individual(firstChromossome));
+//		//printIndividual(new Individual(firstChromossome));
+//		System.out.println("Filho 2");
+//		printIndividual(new Individual(secondChromossome));
 		offspring.add(new Individual(firstChromossome));
 		offspring.add(new Individual(secondChromossome));
 		return offspring;
@@ -119,27 +127,30 @@ public class Main {
 		ArrayList<Circle> chromossome = i.getChromossome();  //get chromossome
 		for(int j = 0; j < 2; j++) {
 			int randomIndex = ThreadLocalRandom.current().nextInt(0, chromossomeSize);//select a random gene
-			int randomFeature = ThreadLocalRandom.current().nextInt(0, 3);//select a random characteristic
-			//randomly reset the choosen characteristic's value
-			if(randomFeature == 0) {
+						
+		
 				chromossome.get(randomIndex).setGrayScale(ThreadLocalRandom.current().nextInt(0, 256)); 
-			} else if (randomFeature == 1){
+		
 				chromossome.get(randomIndex).setSize(ThreadLocalRandom.current().nextInt(0, 40));
-			} else if(randomFeature == 2){ 
+			
 				chromossome.get(randomIndex).setX(ThreadLocalRandom.current().nextInt(0, imgWidth));
 				chromossome.get(randomIndex).setY(ThreadLocalRandom.current().nextInt(0, imgHeight));
-			}
+		
 		}
 		i.setChromossome(chromossome);
 	}
 	public static ArrayList<Individual> parentSelection() {
+		System.out.println("Selecionados:");
 		//TODO 
 		ArrayList<Individual> kIndividuals = new ArrayList<Individual>();
 		ArrayList<Individual> bestIndividuals = new ArrayList<Individual>();	
 		
 		for(int i = 0; i < tournamentSize; i++) {//select random k individuals
-			Individual newIndividual = population.get(ThreadLocalRandom.current().nextInt(0, populationSize));
+			int randIndex = ThreadLocalRandom.current().nextInt(0, populationSize);
+			//System.out.println("Indice aleatorio" +randIndex);
+			Individual newIndividual = new Individual(population.get(randIndex));
 			if(!kIndividuals.contains(newIndividual)) {
+				printIndividual(population.get(randIndex));
 				kIndividuals.add(newIndividual);
 			}
 		}
@@ -176,8 +187,8 @@ public class Main {
 		for (Circle c : i.getChromossome()) {
 			System.out.print(c.toString());
 		}
-		System.out.println(i.getFitness());
-		System.out.println("\n");
+		System.out.println(i.getFitness() + " " + i.getId());
+		//System.out.println("\n");
 	}
 }
 

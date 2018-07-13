@@ -2,7 +2,7 @@ package model;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Circle {
+public class Circle implements Cloneable{
 	private int grayScale;
 	private int size;
 	private int x;
@@ -57,4 +57,7 @@ public class Circle {
 		return "Gray: " + grayScale + ", size: " + size + ", x: " + x + ", y: " + y + " | ";
 		
 	}
+	 protected Object clone() throws CloneNotSupportedException {
+	        return super.clone();
+	    }
 }

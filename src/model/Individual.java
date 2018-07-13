@@ -6,13 +6,32 @@ import java.util.ArrayList;
 
 public class Individual implements Comparable<Individual>{
 	static int id = 0;
+	private int objId;
 	private ArrayList<Circle> chromossome;
 	private double fitness;
 	
 	public Individual(){
+		objId = id;
+		id++;
 		chromossome = new ArrayList<Circle>();
 	}
+	public Individual(Individual i) {
+		objId = id;
+		id++;
+		chromossome = new ArrayList<Circle>();
+		for(Circle c : i.getChromossome()) {
+			try {
+				chromossome.add((Circle) c.clone());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		this.fitness = i.getFitness();
+	}
 	public Individual(ArrayList<Circle> chromossome) {
+		objId = id;
+		id++;
 		this.chromossome = chromossome;
 	}
 	
@@ -54,6 +73,9 @@ public class Individual implements Comparable<Individual>{
 			return 0;
 		else 
 			return 1;
+	}
+	public int getId() {
+		return objId;
 	}
 	
 	
